@@ -1,5 +1,6 @@
 import React from 'react'
 import Modal from './components/Modal';
+import Form from './components/Form';
 import { useState } from 'react';
 const App = () => {
   const [open, setOpen] = useState(false)
@@ -9,7 +10,7 @@ const App = () => {
     <button onClick={() => setOpen(true)} className='bg-blue-600 text-white px-4 py-2'>Open Modal</button>
 
     <Modal isOpen={open} onClose={() => setOpen(false)}>
-        <h2 className='text-2xl font-bold mb-4'>This is a Modal</h2>
+        <Form/>
       </Modal>
         
     </div>
