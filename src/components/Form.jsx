@@ -1,9 +1,12 @@
 // src/components/Form.jsx
 import { useForm } from "react-hook-form";
+import FileUpload from "./FileUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "../utils/validation";
+import { useState } from "react";
 
 const Form = () => {
+    const [selectedFile, setSelectedFile] = useState(null);
   const {
     register,
     handleSubmit,
@@ -13,8 +16,9 @@ const Form = () => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-  };
+  data.file = selectedFile;
+  console.log(data);
+};
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -45,11 +49,10 @@ const Form = () => {
 
       {/* File */}
       <div>
-        <input
-          type="file"
-          {...register("file")}
-          className="w-full border p-2 rounded"
-        />
+        <FileUpload
+  onFileSelect={(file) => setSelectedFile(file)}
+  error={errors.file}
+/>
         {errors.file && (
           <p className="text-red-500 text-sm">{errors.file.message}</p>
         )}
