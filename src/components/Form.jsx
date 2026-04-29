@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,7 +58,7 @@ export default function Form() {
       fd.append("message", data.comment || "");
       fd.append("file", file);
 
-      await axios.post("http://localhost:5000/api/submit", fd);
+      await axios.post(process.env.SERVER_FORM_URL, fd);
       setSuccess(true);
       reset();
       setFile(null);
