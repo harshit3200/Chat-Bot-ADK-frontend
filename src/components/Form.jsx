@@ -69,10 +69,7 @@ export default function Form() {
       setFile(null);
       setProgress(0);
 
-    } catch (e) {
-  console.log(e);
-  console.log("ERROR DATA:", e.response?.data);
-
+    }catch (e) {
   const msg = e.response?.data?.message || "";
 
   if (e.response?.status === 400) {
@@ -84,9 +81,9 @@ export default function Form() {
       l(msg);
     }
   } else {
-    l(msg || "Something went wrong. Try again.");
+    l(msg || "Something went wrong");
   }
-} finally {
+}finally {
       setLoading(false);
     }
   };
