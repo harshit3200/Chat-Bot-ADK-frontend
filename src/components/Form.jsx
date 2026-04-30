@@ -69,25 +69,24 @@ export default function Form() {
       setFile(null);
       setProgress(0);
 
-    } catch (err) {
-      console.log(err);
-      console.log("ERROR DATA:", err.response?.data);
+    } catch (e) {
+  console.log(e);
+  console.log("ERROR DATA:", e.response?.data);
 
-      if (err.response?.status === 400) {
-        // ⚠️ validation error from backend
-        // example: email error
-        const msg = err.response?.data?.message || "";
+  const msg = e.response?.data?.message || "";
 
-        if (msg.toLowerCase().includes("email")) {
-          setError("email", { type: "server", message: msg });
-        } else if (msg.toLowerCase().includes("file")) {
-          setError("file", { type: "server", message: msg });
-        }
-      } else {
-        // ❌ 500 error
-        setServerError(msg || "Something went wrong. Try again.");
-      }
-    } finally {
+  if (e.response?.status === 400) {
+    if (msg.toLowerCase().includes("email")) {
+      h("email", { type: "server", message: msg });
+    } else if (msg.toLowerCase().includes("file")) {
+      h("file", { type: "server", message: msg });
+    } else {
+      l(msg);
+    }
+  } else {
+    l(msg || "Something went wrong. Try again.");
+  }
+} finally {
       setLoading(false);
     }
   };
