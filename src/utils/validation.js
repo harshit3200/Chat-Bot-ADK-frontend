@@ -16,8 +16,8 @@ export const formSchema = z.object({
 
   file: z
     .any()
-    // file upload required
-    // .refine((file) => file !== null, "File is required")
+    // // file upload required
+    .optional()
     .refine(
       (file) =>
         file &&

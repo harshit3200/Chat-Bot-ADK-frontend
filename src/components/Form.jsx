@@ -1,4 +1,3 @@
-require("dotenv").config();
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,13 +10,13 @@ export default function Form() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [serverError, setServerError] = useState("");
-
+  const API_URL = import.meta.env.VITE_API_URL;
   const {
     register,
     handleSubmit,
     setValue,
     watch,
-     reset,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
@@ -56,63 +55,66 @@ export default function Form() {
       fd.append("name", data.name);
       fd.append("email", data.email);
       fd.append("message", data.comment || "");
-      fd.append("file", file);
+      if (file) {
+        if (file) {
+          fd.append("file", file);
+        }
+      }
 
-      await axios.post(process.env.SERVER_FORM_URL, fd);
+      await axios.post(API_URL, fd);
       setSuccess(true);
       reset();
       setFile(null);
       setProgress(0);
-      
 
     } catch (err) {
       console.log(err);
 
       if (err.response?.status === 400) {
-      // ⚠️ validation error from backend
-      // example: email error
-      setError("email", {
-        type: "server",
-        message: err.response.data.message,
-      });
-    } else {
-      // ❌ 500 error
-      setServerError("Something went wrong. Try again.");
-    }
+        // ⚠️ validation error from backend
+        // example: email error
+        setError("email", {
+          type: "server",
+          message: err.response.data.message,
+        });
+      } else {
+        // ❌ 500 error
+        setServerError("Something went wrong. Try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   if (success) {
-        return (
-          <div className="flex items-center justify-center h-[200px]">
+    return (
+      <div className="flex items-center justify-center h-[200px]">
 
-            <div className="bg-white px-6 py-3 rounded-lg shadow text-center relative">
+        <div className="bg-white px-6 py-3 rounded-lg shadow text-center relative">
 
-              {/* close */}
-              <button
-                onClick={() => setSuccess(false)}
-                className="absolute right-2 top-1 text-gray-400"
-              >
-                ✕
-              </button>
+          {/* close */}
+          <button
+            onClick={() => setSuccess(false)}
+            className="absolute right-2 top-1 text-gray-400"
+          >
+            ✕
+          </button>
 
-              <p className="text-sm font-medium">
-                Thank you for your request!
-              </p>
+          <p className="text-sm font-medium">
+            Thank you for your request!
+          </p>
 
-              <p className="text-xs text-gray-400 mt-1">
-                Our manager will contact you within 24 hours
-              </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Our manager will contact you within 24 hours
+          </p>
 
-            </div>
-          </div>
-        );
-      }
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}> 
+    <form onSubmit={handleSubmit(onSubmit)}>
 
       {/* TITLE */}
       <h2 className="text-[15px] font-semibold mb-1">
@@ -224,8 +226,8 @@ export default function Form() {
       <button
         disabled={!consent || loading}
         className={`w-full py-2.5 rounded-lg text-sm ${consent
-            ? "bg-blue-600 text-white"
-            : "bg-gray-200 text-gray-500"
+          ? "bg-blue-600 text-white"
+          : "bg-gray-200 text-gray-500"
           }`}
       >
         {loading ? "Submitting..." : "Submit"}
@@ -233,10 +235,10 @@ export default function Form() {
 
       {/* SERVER ERROR */}
       {serverError && (
-  <p className="text-red-500 text-xs text-center mt-2">
-    {serverError}
-  </p>
-)}
+        <p className="text-red-500 text-xs text-center mt-2">
+          {serverError}
+        </p>
+      )}
 
     </form>
   );
