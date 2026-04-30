@@ -10,13 +10,13 @@ export default function Form() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [serverError, setServerError] = useState("");
-  const API_URL = import.meta.env.VITE_API_URL;
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     reset,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
@@ -30,7 +30,7 @@ export default function Form() {
     setFile(f);
 
     // 🔥 IMPORTANT (Zod ko file dena)
-    setValue("file", f, { shouldValidate: true });
+    setValue("file", f || undefined, { shouldValidate: true });
 
     // fake progress
     setProgress(1);
@@ -48,6 +48,7 @@ export default function Form() {
 
   // 🚀 SUBMIT
   const onSubmit = async (data) => {
+    const API_URL = import.meta.env.VITE_API_URL;
     try {
       setLoading(true);
 
@@ -56,12 +57,13 @@ export default function Form() {
       fd.append("email", data.email);
       fd.append("message", data.comment || "");
       if (file) {
-        if (file) {
-          fd.append("file", file);
-        }
+        fd.append("file", file);
       }
-
-      await axios.post(API_URL, fd);
+      await axios.post(API_URL, fd, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      });
       setSuccess(true);
       reset();
       setFile(null);
@@ -69,17 +71,21 @@ export default function Form() {
 
     } catch (err) {
       console.log(err);
+      console.log("ERROR DATA:", err.response?.data);
 
       if (err.response?.status === 400) {
         // ⚠️ validation error from backend
         // example: email error
-        setError("email", {
-          type: "server",
-          message: err.response.data.message,
-        });
+        const msg = err.response?.data?.message || "";
+
+        if (msg.toLowerCase().includes("email")) {
+          setError("email", { type: "server", message: msg });
+        } else if (msg.toLowerCase().includes("file")) {
+          setError("file", { type: "server", message: msg });
+        }
       } else {
         // ❌ 500 error
-        setServerError("Something went wrong. Try again.");
+        setServerError(msg || "Something went wrong. Try again.");
       }
     } finally {
       setLoading(false);
