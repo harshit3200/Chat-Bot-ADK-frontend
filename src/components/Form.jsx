@@ -70,20 +70,20 @@ export default function Form() {
       setProgress(0);
 
     }catch (e) {
-  const msg = e.response?.data?.message || "";
+      const msg = e.response?.data?.message || "";
 
-  if (e.response?.status === 400) {
-    if (msg.toLowerCase().includes("email")) {
-      h("email", { type: "server", message: msg });
-    } else if (msg.toLowerCase().includes("file")) {
-      h("file", { type: "server", message: msg });
-    } else {
-      l(msg);
-    }
-  } else {
-    l(msg || "Something went wrong");
-  }
-}finally {
+      if (e.response?.status === 400) {
+        if (msg.toLowerCase().includes("email")) {
+          h("email", { type: "server", message: msg });
+        } else if (msg.toLowerCase().includes("file")) {
+          h("file", { type: "server", message: msg });
+        } else {
+          l(msg);
+        }
+      } else {
+        l(msg || "Something went wrong");
+      }
+    }  finally {
       setLoading(false);
     }
   };
@@ -109,7 +109,7 @@ export default function Form() {
           <p className="text-xs text-gray-400 mt-1">
             Our manager will contact you within 24 hours
           </p>
-
+        
         </div>
       </div>
     );
